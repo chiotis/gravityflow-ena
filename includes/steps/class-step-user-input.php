@@ -1061,7 +1061,7 @@ class Gravity_Flow_Step_User_Input extends Gravity_Flow_Step {
 			</label>
 		</div>
 
-		<textarea id="gravityflow-note" rows="4" class="wide" name="gravityflow_note"><?php echo esc_textarea( $posted_note ) ?></textarea>
+		<textarea id="gravityflow-note" rows="4" class="wide uk-textarea" name="gravityflow_note"><?php echo esc_textarea( $posted_note ) ?></textarea>
 		<?php
 
 		if ( $invalid_note ) {
