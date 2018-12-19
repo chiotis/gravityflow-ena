@@ -1,6 +1,12 @@
 Gravity Flow
 ==============================
 
+THIS VERSION IS CUSTOM FORK BUILT AROUND UIKIT AND CLASSICPRESS
+
+SAMPLE
+![alt text](https://github.com/chiotis/gravityflow-ena/raw/master/screenshot-01.png "Screenshot 1")
+
+==============================
 [![Build Status](https://travis-ci.org/gravityflow/gravityflow.svg?branch=master)](https://travis-ci.org/gravityflow/gravityflow)  [![CircleCI](https://circleci.com/gh/gravityflow/gravityflow.svg?style=svg)](https://circleci.com/gh/gravityflow/gravityflow)
 
 Gravity Flow is a premium plugin for WordPress which provides Workflow automation for forms created in Gravity Forms.
