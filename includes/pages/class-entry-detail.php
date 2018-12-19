@@ -359,12 +359,10 @@ class Gravity_Flow_Entry_Detail {
 			$instructions = self::maybe_sanitize_instructions( $instructions );
 
 			?>
-			<div class="postbox gravityflow-instructions">
-				<div class="inside">
-					<?php echo $instructions; ?>
-				</div>
+			<div class="uk-card uk-card-secondary uk-card-body">
+				<h2 class="uk-card-title"><span uk-icon="icon: info"></span> Instructions</h2>
+				<?php echo $instructions; ?>
 			</div>
-
 			<?php
 		}
 	}
