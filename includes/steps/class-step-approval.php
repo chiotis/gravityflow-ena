@@ -721,9 +721,7 @@ class Gravity_Flow_Step_Approval extends Gravity_Flow_Step {
 		}
 		$display_step_status = (bool) $args['step_status'];
 		if ( $display_step_status ) : ?>
-			<h4>
-				<?php printf( '%s (%s)', $this->get_name(), $status ); ?>
-			</h4>
+			<?php printf( '<h4 class="uk-text-center">%s<br><span class="uk-label uk-label-primary">(%s)</span></h4>', $this->get_name(), $status ); ?>
 			<div>
 				<?php $this->workflow_detail_status_box_status(); ?>
 			</div>
@@ -739,17 +737,15 @@ class Gravity_Flow_Step_Approval extends Gravity_Flow_Step {
 	 */
 	public function workflow_detail_status_box_status() {
 		?>
-		<ul>
 			<?php
 			$assignees = $this->get_assignees();
 			foreach ( $assignees as $assignee ) {
 				$assignee_status_label = $assignee->get_status_label();
-				$assignee_status_li    = sprintf( '<li>%s</li>', $assignee_status_label );
+				$assignee_status_li    = sprintf( '<p class="uk-text-center uk-text-bold">%s</p>', $assignee_status_label );
 
 				echo $assignee_status_li;
 			}
 			?>
-		</ul>
 		<?php
 	}
 
@@ -778,7 +774,6 @@ class Gravity_Flow_Step_Approval extends Gravity_Flow_Step {
 
 			if ( $this->note_mode !== 'hidden' ) {
 				?>
-				<br/>
 				<div>
 					<label for="gravityflow-note">
 						<?php
@@ -798,7 +793,7 @@ class Gravity_Flow_Step_Approval extends Gravity_Flow_Step {
 						?>
 					</label>
 				</div>
-				<textarea id="gravityflow-note" style="width:100%;" rows="4" class="wide" name="gravityflow_note"><?php
+				<textarea id="gravityflow-note" style="width:100%;" rows="4" class="wide uk-textarea" name="gravityflow_note"><?php
 					echo rgar( $form, 'failed_validation' ) ? esc_textarea( rgpost( 'gravityflow_note' ) ) : '';
 					?></textarea>
 				<?php
@@ -810,11 +805,10 @@ class Gravity_Flow_Step_Approval extends Gravity_Flow_Step {
 
 			do_action( 'gravityflow_above_approval_buttons', $this, $form );
 			?>
-			<br/><br/>
-			<div class="gravityflow-action-buttons">
+			<div class="uk-margin-top">
 				<button name="gravityflow_approval_new_status_step_<?php echo $this->get_id(); ?>" value="approved" 
 						type="submit"
-						class="button">
+						class="uk-button uk-button-primary uk-text-bold uk-width-1-1" uk-tooltip="title: Approves this entry; pos: left"><span uk-icon="icon: check"></span>
 					<?php
 					$approve_label = esc_html__( 'Approve', 'gravityflow' );
 
@@ -826,12 +820,12 @@ class Gravity_Flow_Step_Approval extends Gravity_Flow_Step {
 					 */
 					$approve_label = apply_filters( 'gravityflow_approve_label_workflow_detail', $approve_label, $this );
 
-					echo $approve_icon . ' ' . $approve_label;
+					echo $approve_label;
 					?>
 				</button>
 				<button name="gravityflow_approval_new_status_step_<?php echo $this->get_id(); ?>" value="rejected" 
 						type="submit"
-						class="button">
+						class="uk-button uk-button-danger uk-text-bold uk-width-1-1" uk-tooltip="title: Rejects this entry; pos: left"><span uk-icon="icon: close"></span>
 					<?php
 					$reject_label = esc_html__( 'Reject', 'gravityflow' );
 
@@ -843,13 +837,13 @@ class Gravity_Flow_Step_Approval extends Gravity_Flow_Step {
 					 */
 					$reject_label = apply_filters( 'gravityflow_reject_label_workflow_detail', $reject_label, $this );
 
-					echo $reject_icon . ' ' . $reject_label;
+					echo $reject_label;
 					?>
 				</button>
 				<?php if ( $this->revertEnable ) : ?>
 					<button name="gravityflow_approval_new_status_step_<?php echo $this->get_id(); ?>" value="revert" 
 							type="submit"
-							class="button">
+							class="uk-button uk-button-default uk-text-bold uk-width-1-1" uk-tooltip="title: Reverts the process back to an input step; pos: left"><span uk-icon="icon: history"></span>
 						<?php
 						$revert_label = esc_html__( 'Revert', 'gravityflow' );
 
@@ -861,7 +855,7 @@ class Gravity_Flow_Step_Approval extends Gravity_Flow_Step {
 						 */
 						$revert_label = apply_filters( 'gravityflow_revert_label_workflow_detail', $revert_label, $this );
 
-						echo $revert_icon . ' ' . $revert_label;
+						echo $revert_label;
 						?>
 					</button>
 					<?php
