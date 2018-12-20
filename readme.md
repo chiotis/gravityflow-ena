@@ -8,6 +8,9 @@ SAMPLE
 
 [![Build Status](https://travis-ci.org/gravityflow/gravityflow.svg?branch=master)](https://travis-ci.org/gravityflow/gravityflow)  [![CircleCI](https://circleci.com/gh/gravityflow/gravityflow.svg?style=svg)](https://circleci.com/gh/gravityflow/gravityflow)
 
+video demo
+https://www.youtube.com/watch?v=rwmL0JUudXw
+
 Gravity Flow is a premium plugin for WordPress which provides Workflow automation for forms created in Gravity Forms.
 
 This repository is a development version of Gravity Flow intended to facilitate communication with developers. It is not stable and should not be used on production sites.
