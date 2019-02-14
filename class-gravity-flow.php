@@ -194,6 +194,8 @@ if ( class_exists( 'GFForms' ) ) {
 			add_filter( 'gform_enqueue_scripts', array( $this, 'filter_gform_enqueue_scripts' ), 10, 2 );
 			add_filter( 'gform_pre_replace_merge_tags', array( $this, 'replace_variables' ), 10, 7 );
 
+			add_filter( 'gform_is_value_match', array( $this, 'filter_value_match_multiuser' ), 10, 6 );
+
 			add_action( 'gform_entry_created', array( $this, 'action_entry_created' ), 8, 2 );
 			add_action( 'gform_register_init_scripts', array( $this, 'filter_gform_register_init_scripts' ), 10, 3 );
 			add_action( 'wp_login', array( $this, 'filter_wp_login' ), 10, 2 );
@@ -4312,11 +4314,15 @@ jQuery('#setting-entry-filter-{$name}').gfFilterUI({$filter_settings_json}, {$va
 		 *
 		 * @param string $value The license key.
 		 *
-		 * @return array|object
+		 * @return array|object|false
 		 */
 		public function check_license( $value = '' ) {
 			if ( empty( $value ) ) {
 				$value = $this->get_app_setting( 'license_key' );
+			}
+
+			if ( empty( $value ) ) {
+				return false;
 			}
 
 			// Static cache to prevent multiple requests for the same license key.
@@ -7640,6 +7646,26 @@ AND m.meta_value='queued'";
 		}
 
 		/**
+		 * Determines if a multiuser field is being used for conditional routing and has an exact value match of user ID
+		 *
+		 * @since 2.5
+		 *
+		 * @return bool
+		 */
+		public function filter_value_match_multiuser( $is_match, $field_value, $target_value, $operation, $source_field, $rule ) {
+
+			if ( ! $source_field || $source_field->type !== 'workflow_multi_user' ) {
+				return $is_match;
+			}
+
+			if ( in_array( $target_value, $field_value, true ) ) {
+				return true;
+			}
+
+			return false;
+		}
+
+		/**
 		 * Target for the gform_pre_replace_merge_tags filter. Replaces the workflow_timeline and created_by merge tags.
 		 *
 		 * @since 2.2.4 Added the assignee to the merge tag if the current user is an assignee.
@@ -8060,15 +8086,23 @@ AND m.meta_value='queued'";
 					$license_details = $posted_license_key ? $this->activate_license( $posted_license_key ) : false;
 				}
 				if ( $license_details ) {
-					set_transient( 'gravityflow_license_details', $license_details, DAY_IN_SECONDS );
+					$expiration = DAY_IN_SECONDS + rand( 0, DAY_IN_SECONDS );
+					set_transient( 'gravityflow_license_details', $license_details, $expiration );
 				}
 			} else {
 				$license_details = get_transient( 'gravityflow_license_details' );
 				if ( ! $license_details ) {
+					$last_check = get_option( 'gravityflow_last_license_check' );
+					if ( $last_check > time() - 5 * MINUTE_IN_SECONDS ) {
+						return;
+					}
+
 					$license_key     = defined( 'GRAVITY_FLOW_LICENSE_KEY' ) ? GRAVITY_FLOW_LICENSE_KEY : '';
 					$license_details = $this->check_license( $license_key );
 					if ( $license_details ) {
-						set_transient( 'gravityflow_license_details', $license_details, DAY_IN_SECONDS );
+						$expiration = DAY_IN_SECONDS + rand( 0, DAY_IN_SECONDS );
+						set_transient( 'gravityflow_license_details', $license_details, $expiration );
+						update_option( 'gravityflow_last_license_check', time() );
 					}
 				}
 			}
