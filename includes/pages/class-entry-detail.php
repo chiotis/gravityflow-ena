@@ -48,8 +48,6 @@ class Gravity_Flow_Entry_Detail {
 
 		?>
 
-		<div class="wrap gf_entry_wrap gravityflow_workflow_wrap gravityflow_workflow_detail">
-
 			<?php
 			self::maybe_show_header( $form, $args );
 
@@ -83,9 +81,8 @@ class Gravity_Flow_Entry_Detail {
 				<form id="gform_<?php echo $form_id; ?>" method="post" enctype='multipart/form-data' action="<?php echo esc_url( $url ); ?>">
 					<?php wp_nonce_field( 'gforms_save_entry', 'gforms_save_entry' ) ?>
 					<input type="hidden" name="step_id" value="<?php echo $current_step ? $current_step->get_id() : ''; ?>" />
-					<div id="poststuff">
-						<div id="post-body" class="metabox-holder <?php echo $classes; ?>">
-							<div id="post-body-content">
+					<div id="post-body" class="metabox-holder <?php echo $classes; ?> uk-grid-collapse" uk-grid>
+						<div class="uk-width-expand@m">
 								<?php
 
 								do_action( 'gravityflow_entry_detail_content_before', $form, $entry );
@@ -98,19 +95,21 @@ class Gravity_Flow_Entry_Detail {
 
 									self::maybe_show_instructions( $can_update, $display_instructions, $current_step, $form, $entry );
 								}
-
+								
+								echo '<div class="uk-padding-small">';
 								self::entry_detail_grid( $form, $entry, $display_empty_fields, $editable_fields, $current_step );
-
+								echo '</div>';
+								
 								do_action( 'gravityflow_entry_detail', $form, $entry, $current_step );
-
+								
 								if ( ! $sidebar ) {
 									gravity_flow()->workflow_entry_detail_status_box( $form, $entry, $current_step, $args );
 									self::print_button( $entry, $show_timeline, $check_view_entry_permissions );
 								}
 								?>
 
-							</div>
-							<div id="postbox-container-1" class="postbox-container">
+						</div>
+						<div class="uk-background-muted uk-padding uk-width-1-3@m uk-width-1-4@l">
 
 							<?php
 							if ( $sidebar ) {
@@ -119,17 +118,14 @@ class Gravity_Flow_Entry_Detail {
 							}
 
 							?>
-							</div>
-							<?php
-							self::maybe_show_timeline( $entry, $form, $show_timeline );
-							?>
 						</div>
-
+						<?php
+						self::maybe_show_timeline( $entry, $form, $show_timeline );
+						?>
 					</div>
 
 				</form>
 
-		</div>
 		<?php
 	}
 
@@ -359,9 +355,8 @@ class Gravity_Flow_Entry_Detail {
 			$instructions = self::maybe_sanitize_instructions( $instructions );
 
 			?>
-			<div class="uk-card uk-card-secondary uk-card-body">
-				<h2 class="uk-card-title"><span uk-icon="icon: info"></span> Instructions</h2>
-				<?php echo $instructions; ?>
+			<div class="uk-card uk-card-secondary uk-card-body uk-padding-small">
+				<span uk-icon="icon: info" class="uk-margin-small-right"></span><?php echo $instructions; ?>
 			</div>
 			<?php
 		}
@@ -441,23 +436,17 @@ class Gravity_Flow_Entry_Detail {
 
 		if ( is_user_logged_in() || $check_view_entry_permissions ) :
 			?>
-
 			<!-- begin print button -->
-			<div class="detail-view-print">
 				<a href="javascript:;"
 				   onclick="var notes_qs = jQuery('#gform_print_notes').is(':checked') ? '&timelines=1' : ''; var url='<?php echo admin_url( 'admin-ajax.php' ) ?>?action=gravityflow_print_entries&lid=<?php echo absint( $entry['id'] ); ?>' + notes_qs; printPage(url);"
-				   class="button"><?php esc_html_e( 'Print', 'gravityflow' ) ?></a>
+				   class="uk-button uk-button-default uk-width-1-1"><span uk-icon="icon: print"></span> <?php esc_html_e( 'Print', 'gravityflow' ) ?></a>
 
 				<?php if ( $show_timeline ) { ?>
-
-					<input type="checkbox" name="print_notes" value="print_notes" checked="checked"
-					       id="gform_print_notes"/>
-					<label for="print_notes"><?php esc_html_e( 'include timeline', 'gravityflow' ) ?></label>
+					<label>
+						<input type="checkbox" name="print_notes" class="uk-checkbox" value="print_notes" id="gform_print_notes" />	<?php esc_html_e( 'include timeline', 'gravityflow' ) ?>
+					</label>
 				<?php } ?>
-
-			</div>
 			<!-- end print button -->
-
 		<?php endif;
 	}
 
@@ -474,16 +463,12 @@ class Gravity_Flow_Entry_Detail {
 		}
 
 		?>
-		<div id="postbox-container-2" class="postbox-container">
-			<div class="postbox gravityflow-timeline">
-				<h3>
-					<label for="name"><?php esc_html_e( 'Timeline', 'gravityflow' ); ?></label>
-				</h3>
-
+		<div class="uk-width-1-1">
+			<div class="gravityflow-timeline uk-padding uk-background-muted">
+				<h3><?php esc_html_e( 'Timeline', 'gravityflow' ); ?></h3>
 				<div class="inside">
 					<?php self::timeline( $entry, $form ); ?>
 				</div>
-
 			</div>
 		</div>
 		<?php
@@ -642,28 +627,22 @@ class Gravity_Flow_Entry_Detail {
 		<input type="hidden" name="save" id="action" value="Update" />
 		<input type="hidden" name="screen_mode" id="screen_mode" value="<?php echo esc_attr( rgpost( 'screen_mode' ) ) ?>" />
 
-		<table cellspacing="0" class="widefat fixed entry-detail-view <?php echo esc_attr( $step_class ) ?>">
-			<thead>
-			<tr>
-				<th id="details">
-					<?php
-					$title = sprintf( '%s : %s %s', esc_html( $form['title'] ), __( 'Entry # ', 'gravityflow' ), absint( $entry['id'] ) );
-					echo apply_filters( 'gravityflow_title_entry_detail', $title, $form, $entry );
-					?>
-				</th>
-				<th style="width:140px; font-size:10px; text-align: right;">
-					<?php
+		<p class="uk-text-lead"><?php
+			$title = sprintf( '%s : %s %s', esc_html( $form['title'] ), __( 'Entry # ', 'gravityflow' ), absint( $entry['id'] ) );
+			echo apply_filters( 'gravityflow_title_entry_detail', $title, $form, $entry );
+		?></p>
+
+		<?php
 					if ( $allow_display_empty_fields ) {
 						?>
-						<input type="checkbox" id="gentry_display_empty_fields" <?php echo $display_empty_fields ? "checked='checked'" : '' ?> onclick="ToggleShowEmptyFields();" />&nbsp;&nbsp;
-						<label for="gentry_display_empty_fields"><?php _e( 'show empty fields', 'gravityflow' ) ?></label>
+						<label for="gentry_display_empty_fields">
+							<input class="uk-checkbox" type="checkbox" id="gentry_display_empty_fields" <?php echo $display_empty_fields ? "checked='checked'" : '' ?> onclick="ToggleShowEmptyFields();" />&nbsp;<?php _e( 'show empty fields', 'gravityflow' ) ?>
+						</label>
 					<?php
 					}
 					?>
-				</th>
-			</tr>
-			</thead>
 
+		<table cellspacing="0" class="uk-table uk-table-striped uk-table-hover uk-table-small uk-table-middle uk-table-responsive <?php echo esc_attr( $step_class ) ?>">
 			<?php
 			if ( empty( $editable_fields ) ) {
 				?>
@@ -754,8 +733,7 @@ class Gravity_Flow_Entry_Detail {
 		?>
 		<tr>
 			<td colspan="2" class="gravityflow-order-summary"><?php echo $order_summary_label; ?></td>
-		</tr>
-		<tr>
+
 			<td colspan="2" class="entry-view-field-value lastrow">
 				<?php self::products_summary( $form, $entry, $products ) ?>
 			</td>
@@ -819,8 +797,7 @@ class Gravity_Flow_Entry_Detail {
 						$is_last = $count >= $field_count ? true : false;
 						?>
 						<tr>
-							<td colspan="2"
-							    class="entry-view-section-break<?php echo $is_last ? ' lastrow' : '' ?>"><?php echo esc_html( $field->label ) ?></td>
+							<td class="entry-view-section-break<?php echo $is_last ? ' lastrow' : '' ?>"><?php echo esc_html( $field->label ) ?></td>
 						</tr>
 						<?php
 					}
@@ -839,7 +816,7 @@ class Gravity_Flow_Entry_Detail {
 						$content = do_shortcode( $content );
 						?>
 						<tr>
-							<td colspan="2" class="entry-view-field-value"><?php echo $content ?></td>
+							<td class="entry-view-field-value"><?php echo $content ?></td>
 						</tr>
 						<?php
 					}
@@ -867,10 +844,8 @@ class Gravity_Flow_Entry_Detail {
 
 						$content = '
                                 <tr>
-                                    <td colspan="2" class="entry-view-field-name">' . esc_html( self::get_label( $field ) ) . '</td>
-                                </tr>
-                                <tr>
-                                    <td colspan="2" class="entry-view-field-value' . $last_row . '">' . $display_value . '</td>
+                                    <td class="uk-width-small uk-text-bold">' . esc_html( self::get_label( $field ) ) . '</td>
+                                    <td>' . $display_value . '</td>
                                 </tr>';
 
 						$content = apply_filters( 'gform_field_content', $content, $field, $value, $entry['id'], $form['id'] );
