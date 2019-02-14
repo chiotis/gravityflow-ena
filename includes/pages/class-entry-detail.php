@@ -81,8 +81,8 @@ class Gravity_Flow_Entry_Detail {
 				<form id="gform_<?php echo $form_id; ?>" method="post" enctype='multipart/form-data' action="<?php echo esc_url( $url ); ?>">
 					<?php wp_nonce_field( 'gforms_save_entry', 'gforms_save_entry' ) ?>
 					<input type="hidden" name="step_id" value="<?php echo $current_step ? $current_step->get_id() : ''; ?>" />
-					<div id="post-body" class="metabox-holder <?php echo $classes; ?> uk-grid-collapse" uk-grid>
-						<div class="uk-width-expand@m">
+					<div id="post-body" class="metabox-holder <?php echo $classes; ?> uk-grid-collapse uk-flex uk-flex-wrap" >
+						<div class="uk-width-2-3@m uk-width-3-4@l">
 								<?php
 
 								do_action( 'gravityflow_entry_detail_content_before', $form, $entry );
