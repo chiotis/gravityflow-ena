@@ -843,7 +843,7 @@ class Gravity_Flow_Step_Approval extends Gravity_Flow_Step {
 				<?php if ( $this->revertEnable ) : ?>
 					<button name="gravityflow_approval_new_status_step_<?php echo $this->get_id(); ?>" value="revert" 
 							type="submit"
-							class="uk-button uk-button-default uk-text-bold uk-width-1-1" uk-tooltip="title: Reverts the process back to an input step; pos: left"><span uk-icon="icon: history"></span>
+							class="uk-button uk-text-bold uk-width-1-1" uk-tooltip="title: Reverts the process back to an input step; pos: left"><span uk-icon="icon: history"></span>
 						<?php
 						$revert_label = esc_html__( 'Revert', 'gravityflow' );
 

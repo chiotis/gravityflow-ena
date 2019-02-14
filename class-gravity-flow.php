@@ -3192,7 +3192,7 @@ jQuery('#setting-entry-filter-{$name}').gfFilterUI({$filter_settings_json}, {$va
 
 				$this->maybe_display_entry_detail_step_status( $current_step, $form, $entry, $args );
 				?>
-				<hr class="uk-divider-icon">
+				<hr class="uk-divider-icon uk-background-muted">
 				<p class="uk-text-center uk-margin-top">Details &amp; Actions</p>
 				<?php
 				$this->maybe_display_entry_detail_workflow_info( $current_step, $form, $entry, $args );
@@ -3262,7 +3262,7 @@ jQuery('#setting-entry-filter-{$name}').gfFilterUI({$filter_settings_json}, {$va
 				printf( '<p>%s: %s</p>', esc_html__( 'Expires', 'gravityflow' ), $glfow_date );
 			}
 
-			echo '<hr class="uk-divider-icon">';
+			echo '<hr class="uk-divider-icon uk-background-muted">';
 
 			/**
 			 * Allows content to be added in the workflow box below the workflow status info.
