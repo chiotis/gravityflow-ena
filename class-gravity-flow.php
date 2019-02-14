@@ -3187,31 +3187,14 @@ jQuery('#setting-entry-filter-{$name}').gfFilterUI({$filter_settings_json}, {$va
 			}
 
 			if ( $current_user_is_assignee || $display_workflow_info || ( $current_step && $step_status ) ) {
+
+				$this->maybe_display_entry_detail_step_status( $current_step, $form, $entry, $args );
 				?>
-				<div id="gravityflow-status-box-container" class="postbox">
-
-					<h3 class="hndle" style="cursor:default;">
-						<span><?php
-							if ( $display_workflow_info ) {
-								echo esc_html( $this->translate_navigation_label( 'workflow' ) );
-							}
-							?></span>
-					</h3>
-
-					<div id="submitcomment" class="submitbox">
-						<div id="minor-publishing" class="gravityflow-status-box">
-							<?php
-
-							$this->maybe_display_entry_detail_workflow_info( $current_step, $form, $entry, $args );
-							$this->maybe_display_entry_detail_step_status( $current_step, $form, $entry, $args );
-
-							?>
-						</div>
-
-					</div>
-
-				</div>
+				<hr class="uk-divider-icon">
+				<p class="uk-text-center uk-margin-top">Details &amp; Actions</p>
 				<?php
+				$this->maybe_display_entry_detail_workflow_info( $current_step, $form, $entry, $args );
+				
 			}
 
 			do_action( 'gravityflow_workflow_detail_sidebar', $form, $entry, $current_step, $args );
@@ -3241,7 +3224,7 @@ jQuery('#setting-entry-filter-{$name}').gfFilterUI({$filter_settings_json}, {$va
 				$entry_id_link = '<a href="' . admin_url( 'admin.php?page=gf_entries&view=entry&id=' . absint( $form['id'] ) . '&lid=' . absint( $entry['id'] ) ) . '">' . $entry_id . '</a>';
 			}
 
-			printf( '%s: %s<br/><br/>', esc_html__( 'Entry ID', 'gravityflow' ), $entry_id_link );
+			printf( '<p>%s: <span class="uk-text-bold">%s</span></p>', esc_html__( 'ID', 'gravityflow' ), $entry_id_link );
 
 			/**
 			 * Allows the format for dates within the entry detail workflow info box to be modified.
@@ -3250,35 +3233,34 @@ jQuery('#setting-entry-filter-{$name}').gfFilterUI({$filter_settings_json}, {$va
 			 */
 			$date_format = apply_filters( 'gravityflow_date_format_entry_detail', '' );
 			$date_created = Gravity_Flow_Common::format_date( $entry['date_created'], $date_format, false, true );
-			printf( '%s: %s', esc_html__( 'Submitted', 'gravityflow' ), esc_html( $date_created ) );
+			printf( '<p>%s: <span class="uk-text-bold">%s</span></p>', esc_html__( 'Submitted', 'gravityflow' ), esc_html( $date_created ) );
 
 			if ( ! empty( $entry['workflow_timestamp'] ) ) {
 				$last_updated = Gravity_Flow_Common::format_date( $entry['workflow_timestamp'], $date_format, false, true );
 				if ( $date_created != $last_updated ) {
-					echo '<br /><br />';
 					esc_html_e( 'Last updated', 'gravityflow' ); ?>: <?php echo esc_html( $last_updated );
 				}
 			}
 
-			echo '<br/><br/>';
-
 			if ( ! empty( $entry['created_by'] ) && $usermeta = get_userdata( $entry['created_by'] ) ) {
-				printf( '%s: %s<br/><br/>', esc_html__( 'Submitted by', 'gravityflow' ), esc_html( $usermeta->display_name ) );
+				printf( '<p>%s: %s</p>', esc_html__( 'Submitted by', 'gravityflow' ), esc_html( $usermeta->display_name ) );
 			}
 
 			$workflow_status = gform_get_meta( $entry['id'], 'workflow_final_status' );
 
 			if ( ! empty( $workflow_status ) ) {
 				$workflow_status_label = $this->translate_status_label( $workflow_status );
-				printf( '%s: %s', esc_html__( 'Status', 'gravityflow' ), $workflow_status_label );
+				printf( '<p>%s: <span class="uk-text-bold">%s</span></p>', esc_html__( 'Status', 'gravityflow' ), $workflow_status_label );
 			}
 
 			if ( false !== $current_step && $current_step instanceof Gravity_Flow_Step
 			     && $current_step->supports_expiration() && $current_step->expiration
 			) {
 				$glfow_date = Gravity_Flow_Common::format_date( $current_step->get_expiration_timestamp(), $date_format, false, true );
-				printf( '<br /><br />%s: %s', esc_html__( 'Expires', 'gravityflow' ), $glfow_date );
+				printf( '<p>%s: %s</p>', esc_html__( 'Expires', 'gravityflow' ), $glfow_date );
 			}
+
+			echo '<hr class="uk-divider-icon">';
 
 			/**
 			 * Allows content to be added in the workflow box below the workflow status info.
@@ -3302,10 +3284,6 @@ jQuery('#setting-entry-filter-{$name}').gfFilterUI({$filter_settings_json}, {$va
 			if ( false !== $current_step && $current_step instanceof Gravity_Flow_Step ) {
 				$display_workflow_info = (bool) $args['workflow_info'];
 
-				if ( $display_workflow_info ) {
-					echo '<hr style="margin-top:10px;"/>';
-				}
-
 				if ( $current_step->is_queued() ) {
 					$this->display_queued_step_details( $current_step );
 				} elseif ( $current_step->is_expired() ) {
@@ -3323,7 +3301,7 @@ jQuery('#setting-entry-filter-{$name}').gfFilterUI({$filter_settings_json}, {$va
 		 * @param Gravity_Flow_Step $current_step The current step for this entry.
 		 */
 		public function display_queued_step_details( $current_step ) {
-			printf( '<h4>%s (%s)</h4>', $current_step->get_name(), esc_html__( 'Queued', 'gravityflow' ) );
+			printf( '<h2>%s (%s)</h2>', $current_step->get_name(), esc_html__( 'Queued', 'gravityflow' ) );
 
 			$scheduled_timestamp = $current_step->get_schedule_timestamp();
 
@@ -3341,7 +3319,7 @@ jQuery('#setting-entry-filter-{$name}').gfFilterUI({$filter_settings_json}, {$va
 					$scheduled_date     = get_date_from_gmt( $scheduled_date_str );
 			}
 
-			printf( '<h4>%s: %s</h4>', esc_html__( 'Scheduled', 'gravityflow' ), $scheduled_date );
+			printf( '<h2>%s: %s</h2>', esc_html__( 'Scheduled', 'gravityflow' ), $scheduled_date );
 		}
 
 		/**
@@ -3357,7 +3335,7 @@ jQuery('#setting-entry-filter-{$name}').gfFilterUI({$filter_settings_json}, {$va
 			$current_step->add_note( $note );
 			$this->process_workflow( $form, $entry_id );
 			$current_step = null;
-			printf( '<h4>%s</h4>', esc_html__( 'Expired: refresh the page', 'gravityflow' ) );
+			printf( '<h2>%s</h2>', esc_html__( 'Expired: refresh the page', 'gravityflow' ) );
 		}
 
 		/**
@@ -3372,22 +3350,14 @@ jQuery('#setting-entry-filter-{$name}').gfFilterUI({$filter_settings_json}, {$va
 
 			if ( GFAPI::current_user_can_any( 'gravityflow_workflow_detail_admin_actions' ) && ! empty( $steps ) ) {
 				?>
-				<div class="postbox">
-					<h3 class="hndle" style="cursor:default;">
-						<span><?php esc_html_e( 'Admin', 'gravityflow' ); ?></span>
-					</h3>
-
-					<div id="submitcomment" class="submitbox">
-						<div id="minor-publishing" style="padding:10px;">
-							<?php wp_nonce_field( 'gravityflow_admin_action', '_gravityflow_admin_action_nonce' ); ?>
-							<select id="gravityflow-admin-action" name="gravityflow_admin_action">
-								<option value=""><?php esc_html_e( 'Select an action', 'gravityflow' ) ?></option>
-								<?php echo $this->get_admin_action_select_options( $current_step, $steps, $form, $entry ); ?>
-							</select>
-							<input type="submit" class="button " name="_gravityflow_admin_action" value="<?php esc_html_e( 'Apply', 'gravityflow' ) ?>"/>
-
-						</div>
-					</div>
+				<div class="uk-margin-top uk-margin-bottom">
+					<h5 class="uk-text-center"><?php esc_html_e( 'Admin Actions', 'gravityflow' ); ?></h5>
+					<?php wp_nonce_field( 'gravityflow_admin_action', '_gravityflow_admin_action_nonce' ); ?>
+					<select name="gravityflow_admin_action" class="uk-select uk-width-1-1">
+						<option value=""><?php esc_html_e( 'Select an action', 'gravityflow' ) ?></option>
+						<?php echo $this->get_admin_action_select_options( $current_step, $steps, $form, $entry ); ?>
+					</select>
+					<input type="submit" class="uk-button uk-button-default uk-margin-small-top uk-width-1-1 " name="_gravityflow_admin_action" value="<?php esc_html_e( 'Apply', 'gravityflow' ) ?>"/>
 				</div>
 				<?php
 			}
@@ -4425,7 +4395,7 @@ jQuery('#setting-entry-filter-{$name}').gfFilterUI({$filter_settings_json}, {$va
 		 */
 		public function submit_page( $admin_ui ) {
 			?>
-			<div class="wrap gf_entry_wrap gravityflow_workflow_wrap gravityflow_workflow_submit">
+			<div class="">
 				<?php if ( $admin_ui ) :	?>
 					<h2 class="gf_admin_page_title">
 						<img width="45" height="22" src="<?php echo esc_url( gravity_flow()->get_base_url() ); ?>/images/gravity-flow-icon-cropped.svg" style="margin-right:5px;"/>
@@ -4648,7 +4618,8 @@ jQuery('#setting-entry-filter-{$name}').gfFilterUI({$filter_settings_json}, {$va
 						$feedback = sprintf( '<p>%s</p>', $feedback );
 					}
 					?>
-					<div class="gravityflow_workflow_notice updated notice notice-success is-dismissible" style="padding:6px;">
+					<div class="uk-alert-primary uk-margin-remove" uk-alert>
+						<a class="uk-alert-close" uk-close></a>
 						<?php echo $feedback; ?>
 					</div>
 					<?php
@@ -4668,7 +4639,7 @@ jQuery('#setting-entry-filter-{$name}').gfFilterUI({$filter_settings_json}, {$va
 			} else {
 
 				?>
-				<div class="wrap gf_entry_wrap gravityflow_workflow_wrap gravityflow_workflow_detail">
+				<div class="">
 					<?php if ( $args['show_header'] ) :	?>
 						<h2 class="gf_admin_page_title">
 							<img width="45" height="22" src="<?php echo $this->get_base_url(); ?>/images/gravity-flow-icon-cropped.svg" style="margin-right:5px;"/>
@@ -4713,7 +4684,7 @@ jQuery('#setting-entry-filter-{$name}').gfFilterUI({$filter_settings_json}, {$va
 			);
 			$args = array_merge( $defaults, $args );
 			?>
-			<div class="wrap gf_entry_wrap gravityflow_workflow_wrap gravityflow_workflow_status">
+			<div class="">
 
 				<?php if ( $args['display_header'] ) : ?>
 					<h2 class="gf_admin_page_title">
@@ -4757,7 +4728,7 @@ jQuery('#setting-entry-filter-{$name}').gfFilterUI({$filter_settings_json}, {$va
 			);
 			$args = array_merge( $defaults, $args );
 			?>
-			<div class="wrap gf_entry_wrap gravityflow_workflow_wrap gravityflow_workflow_activity">
+			<div class="">
 
 				<?php if ( $args['display_header'] ) : ?>
 					<h2 class="gf_admin_page_title">
@@ -4803,7 +4774,6 @@ jQuery('#setting-entry-filter-{$name}').gfFilterUI({$filter_settings_json}, {$va
 			);
 			$args = array_merge( $defaults, $args );
 			?>
-			<div class="wrap gf_entry_wrap gravityflow_workflow_wrap gravityflow_workflow_reports">
 
 				<?php if ( $args['display_header'] ) : ?>
 					<h2 class="gf_admin_page_title">
@@ -4822,7 +4792,6 @@ jQuery('#setting-entry-filter-{$name}').gfFilterUI({$filter_settings_json}, {$va
 				require_once( $this->get_base_path() . '/includes/pages/class-reports.php' );
 				Gravity_Flow_Reports::display( $args );
 				?>
-			</div>
 			<?php
 		}
 
